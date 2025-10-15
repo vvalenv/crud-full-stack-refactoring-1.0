@@ -1,54 +1,55 @@
 /**
-*    File        : frontend/js/controllers/subjectsController.js
+*    File        : frontend/js/controllers/studentsController.js
 *    Project     : CRUD PHP
 *    Author      : Tecnologías Informáticas B - Facultad de Ingeniería - UNMdP
 *    License     : http://www.gnu.org/licenses/gpl.txt  GNU GPL 3.0
 *    Date        : Mayo 2025
 *    Status      : Prototype
-*    Iteration   : 3.0 ( prototype )
+*    Iteration   : 2.0 ( prototype )
 */
 
-import { subjectsAPI } from '../api/subjectsAPI.js';
+import { studentsAPI } from '../apiConsumers/studentsAPI.js';
+
+//2.0
+//For pagination:
+let currentPage = 1;
+let totalPages = 1;
+const limit = 5;
 
 document.addEventListener('DOMContentLoaded', () => 
 {
-    loadSubjects();
-    setupSubjectFormHandler();
+    loadStudents();
+    setupFormHandler();
     setupCancelHandler();
+    setupPaginationControls();//2.0
 });
-
-function setupSubjectFormHandler() 
+  
+function setupFormHandler()
 {
-  const form = document.getElementById('subjectForm');
-  form.addEventListener('submit', async e => 
-  {
+    const form = document.getElementById('studentForm');
+    form.addEventListener('submit', async e => 
+    {
         e.preventDefault();
-        const subject = 
-        {
-            id: document.getElementById('subjectId').value.trim(),
-            name: document.getElementById('name').value.trim()
-        };
-
+        const student = getFormData();
+    
         try 
         {
-            if (subject.id) 
+            if (student.id) 
             {
-                await subjectsAPI.update(subject);
-            }
-            else
+                await studentsAPI.update(student);
+            } 
+            else 
             {
-                await subjectsAPI.create(subject);
+                await studentsAPI.create(student);
             }
-            
-            form.reset();
-            document.getElementById('subjectId').value = '';
-            loadSubjects();
+            clearForm();
+            loadStudents();
         }
         catch (err)
         {
             console.error(err.message);
         }
-  });
+    });
 }
 
 function setupCancelHandler()
@@ -56,80 +57,136 @@ function setupCancelHandler()
     const cancelBtn = document.getElementById('cancelBtn');
     cancelBtn.addEventListener('click', () => 
     {
-        document.getElementById('subjectId').value = '';
+        document.getElementById('studentId').value = '';
     });
 }
 
-async function loadSubjects()
+//2.0
+function setupPaginationControls() 
 {
-    try
+    document.getElementById('prevPage').addEventListener('click', () => 
     {
-        const subjects = await subjectsAPI.fetchAll();
-        renderSubjectTable(subjects);
-    }
-    catch (err)
+        if (currentPage > 1) 
+        {
+            currentPage--;
+            loadStudents();
+        }
+    });
+
+    document.getElementById('nextPage').addEventListener('click', () => 
     {
-        console.error('Error cargando materias:', err.message);
-    }
+        if (currentPage < totalPages) 
+        {
+            currentPage++;
+            loadStudents();
+        }
+    });
+
+    document.getElementById('resultsPerPage').addEventListener('change', e => 
+    {
+        currentPage = 1;
+        loadStudents();
+    });
+}
+  
+function getFormData()
+{
+    return {
+        id: document.getElementById('studentId').value.trim(),
+        fullname: document.getElementById('fullname').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        age: parseInt(document.getElementById('age').value.trim(), 10)
+    };
+}
+  
+function clearForm()
+{
+    document.getElementById('studentForm').reset();
+    document.getElementById('studentId').value = '';
 }
 
-function renderSubjectTable(subjects)
+//2.0
+async function loadStudents()
 {
-    const tbody = document.getElementById('subjectTableBody');
+    try 
+    {
+        const resPerPage = parseInt(document.getElementById('resultsPerPage').value, 10) || limit;
+        const data = await studentsAPI.fetchPaginated(currentPage, resPerPage);
+        console.log(data);
+        renderStudentTable(data.students);
+        totalPages = Math.ceil(data.total / resPerPage);
+        document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
+    } 
+    catch (err) 
+    {
+        console.error('Error cargando estudiantes:', err.message);
+    }
+}
+  
+function renderStudentTable(students)
+{
+    const tbody = document.getElementById('studentTableBody');
     tbody.replaceChildren();
-
-    subjects.forEach(subject =>
+  
+    students.forEach(student => 
     {
         const tr = document.createElement('tr');
-
-        tr.appendChild(createCell(subject.name));
-        tr.appendChild(createSubjectActionsCell(subject));
-
+    
+        tr.appendChild(createCell(student.fullname));
+        tr.appendChild(createCell(student.email));
+        tr.appendChild(createCell(student.age.toString()));
+        tr.appendChild(createActionsCell(student));
+    
         tbody.appendChild(tr);
     });
 }
-
+  
 function createCell(text)
 {
     const td = document.createElement('td');
     td.textContent = text;
     return td;
 }
-
-function createSubjectActionsCell(subject)
+  
+function createActionsCell(student)
 {
     const td = document.createElement('td');
-
+  
     const editBtn = document.createElement('button');
     editBtn.textContent = 'Editar';
     editBtn.className = 'w3-button w3-blue w3-small';
-    editBtn.addEventListener('click', () => 
-    {
-        document.getElementById('subjectId').value = subject.id;
-        document.getElementById('name').value = subject.name;
-    });
-
+    editBtn.addEventListener('click', () => fillForm(student));
+  
     const deleteBtn = document.createElement('button');
     deleteBtn.textContent = 'Borrar';
     deleteBtn.className = 'w3-button w3-red w3-small w3-margin-left';
-    deleteBtn.addEventListener('click', () => confirmDeleteSubject(subject.id));
-
+    deleteBtn.addEventListener('click', () => confirmDelete(student.id));
+  
     td.appendChild(editBtn);
     td.appendChild(deleteBtn);
     return td;
 }
-
-async function confirmDeleteSubject(id)
+  
+function fillForm(student)
 {
-    if (!confirm('¿Seguro que deseas borrar esta materia?')) return;
-
-    try
+    document.getElementById('studentId').value = student.id;
+    document.getElementById('fullname').value = student.fullname;
+    document.getElementById('email').value = student.email;
+    document.getElementById('age').value = student.age;
+}
+  
+async function confirmDelete(id) 
+{
+    if (!confirm('¿Estás seguro que deseas borrar este estudiante?')) return;
+  
+    try 
     {
-        await subjectsAPI.remove(id);
-        loadSubjects();
-    }
-    catch (err)
+        await studentsAPI.remove(id);
+        loadStudents();
+    } 
+    catch (err) 
     {
-        console.error('Error al borrar materia:', err.message);
+        console.error('Error al borrar:', err.message);
     }
 }
+  
