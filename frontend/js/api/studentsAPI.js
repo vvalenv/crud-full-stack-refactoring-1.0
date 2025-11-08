@@ -1,4 +1,4 @@
-/**
+/*
 *    File        : frontend/js/api/studentsAPI.js
 *    Project     : CRUD PHP
 *    Author      : Tecnologías Informáticas B - Facultad de Ingeniería - UNMdP

@@ -8,7 +8,7 @@
 *    Iteration   : 2.0 ( prototype )
 */
 
-import { studentsAPI } from '../apiConsumers/studentsAPI.js';
+import { studentsAPI } from '../api/studentsAPI.js';
 
 //2.0
 //For pagination:
