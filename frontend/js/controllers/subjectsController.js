@@ -30,20 +30,20 @@ function setupFormHandler()
     form.addEventListener('submit', async e => 
     {
         e.preventDefault();
-        const student = getFormData();
+        const subject = getFormData();
     
         try 
         {
-            if (student.id) 
+            if (subject.id) 
             {
-                await studentsAPI.update(student);
+                await subjectsAPI.update(subject);
             } 
             else 
             {
-                await studentsAPI.create(student);
+                await subjectsAPI.create(subject);
             }
             clearForm();
-            loadStudents();
+            loadSubjects();
         }
         catch (err)
         {
@@ -111,7 +111,7 @@ async function loadSubjects()
     try 
     {
         const resPerPage = parseInt(document.getElementById('resultsPerPage').value, 10) || limit;
-        const data = await studentsAPI.fetchPaginated(currentPage, resPerPage);
+        const data = await subjectsAPI.fetchPaginated(currentPage, resPerPage);
         console.log(data);
         renderSubjectTable(data.subjects);
         totalPages = Math.ceil(data.total / resPerPage);
@@ -123,12 +123,12 @@ async function loadSubjects()
     }
 }
   
-function renderStudentTable(subjects)
+function renderSubjectTable(subjects)
 {
     const tbody = document.getElementById('subjectTableBody');
     tbody.replaceChildren();
   
-    students.forEach(subject => 
+    subjects.forEach(subject => 
     {
         const tr = document.createElement('tr');
     
@@ -148,7 +148,7 @@ function createCell(text)
     return td;
 }
   
-function createActionsCell(subjects)
+function createActionsCell(subject)
 {
     const td = document.createElement('td');
   
@@ -167,9 +167,9 @@ function createActionsCell(subjects)
     return td;
 }
   
-function fillForm(student)
+function fillForm(subject)
 {
-    document.getElementById('studentId').value = subject.id;
+    document.getElementById('subjectId').value = subject.id;
     document.getElementById('name').value = subject.name;
    // document.getElementById('email').value = student.email;
   //  document.getElementById('age').value = student.age;
@@ -181,7 +181,7 @@ async function confirmDelete(id)
   
     try 
     {
-        await studentsAPI.remove(id);
+        await subjectsAPI.remove(id);
         loadSubjects();
     } 
     catch (err) 
