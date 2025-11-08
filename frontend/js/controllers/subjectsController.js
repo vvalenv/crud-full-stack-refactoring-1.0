@@ -1,5 +1,5 @@
 /*
-*    File        : frontend/js/controllers/studentsController.js
+*    File        : frontend/js/controllers/subjectsController.js
 *    Project     : CRUD PHP
 *    Author      : Tecnologías Informáticas B - Facultad de Ingeniería - UNMdP
 *    License     : http://www.gnu.org/licenses/gpl.txt  GNU GPL 3.0
@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () =>
     loadSubjects();
     setupFormHandler();
     setupCancelHandler();
-    setupPaginationControls();//2.0
+    setupPaginationControls(); //2.0
 });
   
 function setupFormHandler()

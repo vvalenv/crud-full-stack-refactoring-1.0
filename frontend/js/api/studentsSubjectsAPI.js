@@ -11,8 +11,8 @@
 import { createAPI } from './apiFactory.js';
 export const studentsSubjectsAPI = createAPI('studentsSubjects');
 
-/**
- * Ejemplo de extensión de la API:
+/*
+  Ejemplo de extensión de la API:
 */
 // import { createAPI } from './apiFactory.js';
 // const baseAPI = createAPI('studentsSubjects');
