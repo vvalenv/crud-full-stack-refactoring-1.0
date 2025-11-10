@@ -113,8 +113,8 @@ async function loadSubjects()
         const resPerPage = parseInt(document.getElementById('resultsPerPage').value, 10) || limit;
         const data = await subjectsAPI.fetchPaginated(currentPage, resPerPage);
         console.log(data);
-        renderSubjectTable(data.subjects);
-        totalPages = Math.ceil(data.total / resPerPage);
+        renderSubjectTable(data);
+        totalPages = Math.ceil(data.length / resPerPage);
         document.getElementById('pageInfo').textContent = `Página ${currentPage} de ${totalPages}`;
     } 
     catch (err) 
@@ -127,16 +127,12 @@ function renderSubjectTable(subjects)
 {
     const tbody = document.getElementById('subjectTableBody');
     tbody.replaceChildren();
-  
-    subjects.forEach(subject => 
+
+    subjects.forEach(subject =>
     {
         const tr = document.createElement('tr');
-    
         tr.appendChild(createCell(subject.name));
-        //tr.appendChild(createCell(student.email));
-        //tr.appendChild(createCell(student.age.toString()));
         tr.appendChild(createActionsCell(subject));
-    
         tbody.appendChild(tr);
     });
 }
@@ -171,8 +167,6 @@ function fillForm(subject)
 {
     document.getElementById('subjectId').value = subject.id;
     document.getElementById('name').value = subject.name;
-   // document.getElementById('email').value = student.email;
-  //  document.getElementById('age').value = student.age;
 }
   
 async function confirmDelete(id) 
