@@ -54,6 +54,20 @@ function getSubjectsByStudent($conn, $student_id)
     return $result->fetch_all(MYSQLI_ASSOC); 
 }
 
+// inciso E
+function noRepite($conn, $student_id, $subject_id) 
+{
+    $sql = "SELECT ss.id 
+    FROM students_subjects ss 
+    WHERE ss.student_id = ? AND ss.subject_id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("ii", $student_id, $subject_id);
+    $stmt->execute();
+    $result= $stmt->get_result();
+    return count($result->fetch_all(MYSQLI_ASSOC)) > 0;
+}
+//
+
 function updateStudentSubject($conn, $id, $student_id, $subject_id, $approved) 
 {
     $sql = "UPDATE students_subjects 
