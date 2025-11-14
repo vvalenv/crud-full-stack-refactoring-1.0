@@ -69,23 +69,47 @@ function setupFormHandler()
             } 
             else 
             {
-                await studentsSubjectsAPI.create(relation);
+                try {
+                    await studentsSubjectsAPI.create(relation);
+                }
+                catch (err) {
+                    creaCartel("Error. No se puede repetir asignacion de alumno y materia");
+                }
             }
             clearForm();
             loadRelations();
         } 
         catch (err) 
         {
-            console.error('Error guardando relación:', err.message);
+            creaCartel(err.message);
         }
     });
 }
 
-// inciso E
-/*function verificaNoRepetir(relation)
-{
 
-};*/
+// inciso E
+function creaCartel(mensaje)
+{
+    const cartel = document.createElement('div');
+    const texto = document.createElement('p');
+    const img = document.createElement('img');
+    img.className = "img-cartel";
+    img.src = "../img/esqueleto.gif";
+    cartel.appendChild(img);
+   // cartel.textContent = "Error. No se puede repetir asignacion de alumno y materia";
+    cartel.className = "cartel";
+    texto.className = "texto-cartel";
+    texto.textContent = mensaje;
+    const btnCerrar = document.createElement('div');
+    btnCerrar.className = "cruz";
+    btnCerrar.textContent = "Cerrar";
+    btnCerrar.onclick = () => cartel.remove();
+    cartel.appendChild(btnCerrar);
+    cartel.appendChild(texto);
+    cartel.appendChild(img);
+    document.body.appendChild(cartel);
+
+};
 
 function setupCancelHandler()
 {

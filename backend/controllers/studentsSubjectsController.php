@@ -37,9 +37,9 @@ function handlePost($conn)
         }
         else {
             http_response_code(400);
-            echo json_encode(["error" => "Error. No se puede repetir asignacion de alumno y materia"]);
+            echo json_encode(["error" => "Error. No se puede repetir asignacion de alumno y materia",
+                            "message" => "Error. No se puede repetir asignacion de alumno y materia"]);
         }
-
     
 }
 
