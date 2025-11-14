@@ -55,7 +55,7 @@ function getSubjectsByStudent($conn, $student_id)
 }
 
 // inciso E
-function noRepite($conn, $student_id, $subject_id) 
+function repite($conn, $student_id, $subject_id) 
 {
     $sql = "SELECT ss.id 
     FROM students_subjects ss 
